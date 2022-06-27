@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "An experiment in web app state management",
   "main": "build/live-state.js",
+  "types": "build/live-state.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
@@ -14,6 +15,6 @@
     "typescript": "^4.2.2"
   },
   "dependencies": {
-    "phoenix": "^1.5.8"
+    "phoenix": "1.6.10"
   }
 }
