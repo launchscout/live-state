@@ -1,5 +1,7 @@
 import { Socket, Channel } from "phoenix";
 
+export { LiveStateController } from "./livestate-controller";
+
 export class LiveState {
 
   subscribers: Array<Function> = [];
@@ -34,3 +36,4 @@ export class LiveState {
 }
 
 export default LiveState;
+
