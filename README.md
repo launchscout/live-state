@@ -3,11 +3,25 @@
 This is a package to help you build embedded micro-front-end applications. It connects to
 a server running [LiveState](https://github.com/gaslight/live_state) and sends events and receives state (and possibly other events).
 
-## LiveStateController
-
-This is a Reactive Controller designed to manage state for a LitElement. It is constructed like so:
+## Installation
 
 ```
+npm install phx-live-state
+```
+
+## Usage
+
+## LiveStateController
+
+This is a Reactive Controller designed to manage state for a LitElement. It is a named export:
+
+```javascript
+import { LiveStateController } from 'live-state';
+```
+
+It is constructed like so:
+
+```javascript
   private controller = new LiveStateController(this, {
     channel: 'comments:all',
     properties: ['comments'],

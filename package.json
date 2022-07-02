@@ -1,5 +1,5 @@
 {
-  "name": "live-state",
+  "name": "phx-live-state",
   "version": "0.0.1",
   "description": "An experiment in web app state management",
   "main": "build/live-state.js",
