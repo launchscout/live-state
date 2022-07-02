@@ -27,9 +27,9 @@ The first argument is the host element, the second an Options object with he fol
   * send - events to list to on host element and sent to the LiveState server. They are expected to be CustomEvents with a detail, which will be sent as the payload
   * receive - events that can be pushed from the LiveState server and will then be dispatched as a CustomEvent of the same name on the host element
 
-  ## Example
+## Example
 
-  It's easiest to understand all this by example. Take a look at the following two projects:
+It's easiest to understand all this by example. Take a look at the following two projects:
 
-  * https://github.com/gaslight/livestate-comments
-  * https://github.com/gaslight/live_state_comments
+* https://github.com/gaslight/livestate-comments
+* https://github.com/gaslight/live_state_comments
