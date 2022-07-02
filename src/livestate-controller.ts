@@ -4,6 +4,7 @@ import LiveState from './live-state';
 type Options = {
   url?: string,
   channel?: string,
+  properties?: Array<string>,
   events?: {
     send: Array<string>,
     receive: Array<string>
@@ -27,9 +28,12 @@ export class LiveStateController implements ReactiveController {
   }
 
   hostConnected() {
-    this.liveState = new LiveState((this.host as any).url || this.options.url, this.options.channel);
+    this.liveState = new LiveState((this.host as any).url || this.options.url, (this.host as any).channel || this.options.channel);
     this.liveState.subscribe((state: any) => {
       this.state = state;
+      this.options.properties.forEach((prop) => {
+        this.host[prop] = this.state[prop];
+      });
       this.host.requestUpdate();
     });
     this.options.events?.send.forEach((eventName) => {
