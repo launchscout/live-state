@@ -1,7 +1,7 @@
 # live-state
 
 This is a package to help you build embedded micro-front-end applications. It connects to
-a server running [LiveState] and sends events and receives state (and possibly other events).
+a server running [LiveState](https://github.com/gaslight/live_state) and sends events and receives state (and possibly other events).
 
 ## LiveStateController
 
