@@ -1,17 +1,25 @@
 {
   "name": "phx-live-state",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An experiment in web app state management",
-  "main": "build/live-state.js",
-  "types": "build/live-state.d.ts",
+  "main": "build/src/live-state.js",
+  "types": "build/src/live-state.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "web-test-runner \"build/**/*test.js\" --node-resolve",
     "build": "tsc",
+    "pretest": "tsc",
     "prepublish": "npm run build"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@esm-bundle/chai": "^4.3.4-fix.0",
+    "@types/sinon-chai": "^3.2.8",
+    "@web/test-runner": "^0.13.31",
+    "quibble": "^0.6.12",
+    "sinon": "^14.0.0",
+    "sinon-chai": "^3.7.0",
+    "testdouble": "^3.16.6",
     "typescript": "^4.2.2"
   },
   "dependencies": {

@@ -4,6 +4,7 @@ import LiveState from './live-state';
 type Options = {
   url?: string,
   channel?: string,
+  connectParams?: object,
   properties?: Array<string>,
   events?: {
     send: Array<string>,
@@ -28,7 +29,11 @@ export class LiveStateController implements ReactiveController {
   }
 
   hostConnected() {
-    this.liveState = new LiveState((this.host as any).url || this.options.url, (this.host as any).channel || this.options.channel);
+    this.liveState = new LiveState(
+      (this.host as any).url || this.options.url, 
+      (this.host as any).channel || this.options.channel
+    );
+    this.liveState.connect(this.options.connectParams);
     this.liveState.subscribe((state: any) => {
       this.state = state;
       this.options.properties.forEach((prop) => {
@@ -36,10 +41,10 @@ export class LiveStateController implements ReactiveController {
       });
       this.host.requestUpdate();
     });
-    this.options.events?.send.forEach((eventName) => {
+    this.options.events?.send?.forEach((eventName) => {
       this.host.addEventListener(eventName, (customEvent: CustomEvent) => this.liveState.pushEvent(customEvent));
     });
-    this.options.events?.receive.forEach((eventName) => {
+    this.options.events?.receive?.forEach((eventName) => {
       this.liveState.channel.on(eventName, (event) => {
         this.host.dispatchEvent(new CustomEvent(eventName, {detail: event}));
       });
@@ -47,6 +52,6 @@ export class LiveStateController implements ReactiveController {
   }
 
   hostDisconnected() {
-
+    this.liveState?.disconnect();
   }
 }
