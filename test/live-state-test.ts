@@ -19,5 +19,11 @@ describe('LiveState', () => {
     socketMock.verify();
   });
 
-  it('disconnects', () => {});
+  it('disconnects', () => {
+    const liveState = new LiveState("wss://foo.com", "stuff");
+    const socketMock = sinon.mock(liveState.socket);
+    socketMock.expects('disconnect').exactly(1)
+    liveState.disconnect();
+    socketMock.verify();
+  });
 });

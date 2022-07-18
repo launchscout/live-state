@@ -22,6 +22,10 @@ export class LiveState {
     this.channel.on("state:change", (state) => this.notifySubscribers(state));
   }
 
+  disconnect() {
+    this.socket.disconnect();
+  }
+
   subscribe(subscriber: Function) {
     this.subscribers.push(subscriber);
   }
