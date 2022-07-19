@@ -2,14 +2,26 @@ import { Socket, Channel } from "phoenix";
 
 export { LiveStateController } from "./livestate-controller";
 
-export const connectElement = (liveState: LiveState, el: HTMLElement, { properties, attributes }) => {
+type ConnectOptions = {
+  properties?: Array<string>;
+  attributes?: Array<string>;
+  events?: {
+    send?: Array<string>,
+    receive?: Array<string>
+  }
+}
+
+export const connectElement = (liveState: LiveState, el: HTMLElement, { properties, attributes, events } : ConnectOptions) => {
   liveState.subscribe((state: any) => {
-    properties.forEach((prop) => {
+    properties?.forEach((prop) => {
       el[prop] = state[prop];
     });
-    attributes.forEach((attr) => {
+    attributes?.forEach((attr) => {
       el.setAttribute(attr, state[attr]);
     });
+  });
+  events?.send?.forEach((eventName) => {
+    el.addEventListener(eventName, (customEvent: CustomEvent) => liveState.pushEvent(customEvent));
   });
 }
 

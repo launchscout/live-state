@@ -4,7 +4,8 @@
     "outDir": "build",
     "moduleResolution": "node",
     "declaration": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true
   },
   "include": ["src/**/*", "test/**/*"]
 }

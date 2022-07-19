@@ -41,13 +41,13 @@ describe('LiveState', () => {
     socketMock.expects('connect').exactly(1);
     socketMock.expects('channel').exactly(1).withArgs('stuff', { foo: 'bar' }).returns(stubChannel);
     liveState.connect({ foo: 'bar' });
-    let state = {foo: 'bar'};
-    liveState.subscribe(({foo}) => state.foo = foo);
+    let state = { foo: 'bar' };
+    liveState.subscribe(({ foo }) => state.foo = foo);
     expect(liveState.channel.on.callCount).to.equal(1)
     const onArgs = liveState.channel.on.getCall(0).args;
     expect(onArgs[0]).to.equal("state:change")
     const onHandler = onArgs[1];
-    onHandler({foo: 'wuzzle'});
+    onHandler({ foo: 'wuzzle' });
     expect(state.foo).to.equal('wuzzle');
     socketMock.verify();
   });
@@ -62,10 +62,10 @@ describe('LiveState', () => {
     socketMock.expects('connect').exactly(1);
     socketMock.expects('channel').exactly(1).withArgs('stuff').returns(stubChannel);
     liveState.connect();
-    liveState.pushEvent(new CustomEvent('sumpinhappend', {detail: {foo: 'bar'}}));
+    liveState.pushEvent(new CustomEvent('sumpinhappend', { detail: { foo: 'bar' } }));
     const pushCall = liveState.channel.push.getCall(0);
     expect(pushCall.args[0]).to.equal('lvs_evt:sumpinhappend');
-    expect(pushCall.args[1]).to.deep.equal({foo: 'bar'});
+    expect(pushCall.args[1]).to.deep.equal({ foo: 'bar' });
   });
 
   describe('connectElement', () => {
@@ -82,15 +82,28 @@ describe('LiveState', () => {
         attributes: ['foo']
       });
       const stateChange = liveState.channel.on.getCall(0).args[1];
-      stateChange({foo: 'wuzzle', bar: 'wizzle'});
+      stateChange({ foo: 'wuzzle', bar: 'wizzle' });
       await el.updateComplete;
-      expect(el.bar).to.equal('wizzle')
+      expect(el.bar).to.equal('wizzle');
       expect(el.shadowRoot.innerHTML).to.contain('wizzle');
       expect(el.getAttribute('foo')).to.equal('wuzzle');
       expect(el.shadowRoot.innerHTML).to.contain('wuzzle');
     });
 
-    
+    it('sends events', async () => {
+      const el: TestElement = await fixture('<test-element></test-element>');
+      connectElement(liveState, el, {
+        properties: ['bar'],
+        attributes: ['foo'],
+        events: {
+          send: ['sayHi']
+        }
+      });
+      el.dispatchEvent(new CustomEvent('sayHi', { detail: { greeting: 'wazzaap' } }));
+      const pushCall = liveState.channel.push.getCall(0);
+      expect(pushCall.args[0]).to.equal('lvs_evt:sayHi');
+      expect(pushCall.args[1]).to.deep.equal({ greeting: 'wazzaap' });
+    });
   });
-  
+
 });
