@@ -72,7 +72,6 @@ describe('LiveState', () => {
     beforeEach(() => {
       socketMock.expects('connect').exactly(1);
       socketMock.expects('channel').exactly(1).withArgs('stuff').returns(stubChannel);
-      liveState.connect();
     });
 
     it('updates on state changes', async () => {

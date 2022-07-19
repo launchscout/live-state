@@ -8,10 +8,12 @@ type ConnectOptions = {
   events?: {
     send?: Array<string>,
     receive?: Array<string>
-  }
+  },
+  connectParams?: object
 }
 
-export const connectElement = (liveState: LiveState, el: HTMLElement, { properties, attributes, events } : ConnectOptions) => {
+export const connectElement = (liveState: LiveState, el: HTMLElement, { properties, attributes, events, connectParams } : ConnectOptions) => {
+  liveState.connect(connectParams);
   liveState.subscribe((state: any) => {
     properties?.forEach((prop) => {
       el[prop] = state[prop];
