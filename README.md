@@ -1,4 +1,4 @@
-# live-state
+# phx-live-state
 
 This is a package to help you build embedded micro-front-end applications. It connects to
 a server running [LiveState](https://github.com/gaslight/live_state) and sends events and receives state (and possibly other events).
@@ -11,35 +11,38 @@ npm install phx-live-state
 
 ## Usage
 
-## LiveStateController
+## LiveState
 
-This is a Reactive Controller designed to manage state for a LitElement. It is a named export:
+This established the connection with a LiveState server. The constructor takes two arguments:
+
+* url
+* channel name
+
+It is the default export from LiveState
 
 ```javascript
-import { LiveStateController } from 'live-state';
+import LiveState from 'phx-live-state';
+const liveState = new LiveState('ws://localhost:4000', 'channelName');
 ```
 
-It is constructed like so:
+## connectElement
 
 ```javascript
-  private controller = new LiveStateController(this, {
-    channel: 'comments:all',
-    properties: ['comments'],
-    events: {
-      send: ['add_comment'],
-      receive: ['comment_added']
-    }
-  });
-```
+import { connectElement } from 'phx-live-state';
 
-The first argument is the host element, the second an Options object with he following properties:
+This is a function designed to connect an HTML Element with livestate and takes the following arguments:
 
-* url - The websocket server to connect to. This can also be a host property or attribute.
-* channel - The name of the Phoenix channel to connect to. This can also be a host property or attribute.
-* properties - A list of properties managed by LiveState. These will be updated on the host element any time they change.
-* events:
-  * send - events to list to on host element and sent to the LiveState server. They are expected to be CustomEvents with a detail, which will be sent as the payload
-  * receive - events that can be pushed from the LiveState server and will then be dispatched as a CustomEvent of the same name on the host element
+* liveState - a LiveState instance
+* el - an HTMLElement
+* options
+
+The options object allows the following properties:
+
+* properties - A list of properties managed by LiveState. These will be updated any time a state property of the same name changes.
+* attributes 
+* events - A list of attributes managed by LiveState. These will be updated any time a state property of the same name changes.
+  * send - events to listen to on the element and send to the LiveState server. They are expected to be CustomEvents with a detail, which will be sent as the payload
+  * receive - events that can be pushed from the LiveState server and will then be dispatched as a CustomEvent of the same name on the element
 
 ## Example
 
