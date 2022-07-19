@@ -104,6 +104,25 @@ describe('LiveState', () => {
       expect(pushCall.args[0]).to.equal('lvs_evt:sayHi');
       expect(pushCall.args[1]).to.deep.equal({ greeting: 'wazzaap' });
     });
+
+    it('receives events', async () => {
+      const el: TestElement = await fixture('<test-element></test-element>');
+      connectElement(liveState, el, {
+        properties: ['bar'],
+        attributes: ['foo'],
+        events: {
+          send: ['sayHi'],
+          receive: ['sayHiBack']
+        }
+      });
+      const onArgs = liveState.channel.on.getCall(1).args;
+      expect(onArgs[0]).to.equal("sayHiBack")
+      const onHandler = onArgs[1];
+      let eventDetail;
+      el.addEventListener('sayHiBack', ({detail}: CustomEvent) => {eventDetail = detail});
+      onHandler({foo: 'bar'})
+      expect(eventDetail).to.deep.equal({foo: 'bar'});
+    });
   });
 
 });

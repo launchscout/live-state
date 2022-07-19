@@ -23,6 +23,11 @@ export const connectElement = (liveState: LiveState, el: HTMLElement, { properti
   events?.send?.forEach((eventName) => {
     el.addEventListener(eventName, (customEvent: CustomEvent) => liveState.pushEvent(customEvent));
   });
+  events?.receive?.forEach((eventName) => {
+    liveState.channel.on(eventName, (event) => {
+      el.dispatchEvent(new CustomEvent(eventName, {detail: event}));
+    });
+  })
 }
 
 export class LiveState {
