@@ -5,6 +5,7 @@ import sinon from 'sinon';
 import { html, LitElement } from 'lit';
 import { property, customElement, state } from 'lit/decorators.js';
 import { fixture } from '@open-wc/testing';
+import { compare } from "fast-json-patch";
 
 @customElement('test-element')
 class TestElement extends LitElement {
@@ -43,13 +44,36 @@ describe('LiveState', () => {
     liveState.connect({ foo: 'bar' });
     let state = { foo: 'bar' };
     liveState.subscribe(({ foo }) => state.foo = foo);
-    expect(liveState.channel.on.callCount).to.equal(1)
+    expect(liveState.channel.on.callCount).to.equal(2)
     const onArgs = liveState.channel.on.getCall(0).args;
-    expect(onArgs[0]).to.equal("state:change")
+    expect(onArgs[0]).to.equal("state:change");
     const onHandler = onArgs[1];
     onHandler({ foo: 'wuzzle' });
     expect(state.foo).to.equal('wuzzle');
     socketMock.verify();
+  });
+
+  it('understands jsonpatch for state changes', () => {
+    const initialState = { foo: "bar" };
+    const newState = { foo: "baz", bing: [1, 2] };
+    const patch = { patch: compare(initialState, newState) };
+    socketMock.expects('connect').exactly(1);
+    socketMock.expects('channel').exactly(1).returns(stubChannel);
+    liveState.connect({ foo: 'bar' });
+    let state = {};
+    liveState.subscribe((newState) => state = newState);
+
+    const onChangeArgs = liveState.channel.on.getCall(0).args;
+    expect(onChangeArgs[0]).to.equal("state:change");
+    const onChangeHandler = onChangeArgs[1];
+    onChangeHandler(initialState);
+
+    const onPatchArgs = liveState.channel.on.getCall(1).args;
+    expect(onPatchArgs[0]).to.equal("state:patch");
+    const onPatchHandler = onPatchArgs[1];
+    onPatchHandler(patch);
+
+    expect(state).to.deep.equal(newState);
   });
 
   it('disconnects', () => {
@@ -114,13 +138,13 @@ describe('LiveState', () => {
           receive: ['sayHiBack']
         }
       });
-      const onArgs = liveState.channel.on.getCall(1).args;
+      const onArgs = liveState.channel.on.getCall(2).args;
       expect(onArgs[0]).to.equal("sayHiBack")
       const onHandler = onArgs[1];
       let eventDetail;
-      el.addEventListener('sayHiBack', ({detail}: CustomEvent) => {eventDetail = detail});
-      onHandler({foo: 'bar'})
-      expect(eventDetail).to.deep.equal({foo: 'bar'});
+      el.addEventListener('sayHiBack', ({ detail }: CustomEvent) => { eventDetail = detail });
+      onHandler({ foo: 'bar' })
+      expect(eventDetail).to.deep.equal({ foo: 'bar' });
     });
   });
 

@@ -1,11 +1,11 @@
 {
   "name": "phx-live-state",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "An experiment in web app state management",
   "main": "build/src/live-state.js",
   "types": "build/src/live-state.d.ts",
   "scripts": {
-    "test": "web-test-runner \"build/**/*test.js\" --node-resolve",
+    "test": "web-test-runner \"build/**/*test.js\" --puppeteer --node-resolve",
     "build": "tsc",
     "pretest": "tsc",
     "prepublish": "npm run build"
@@ -17,6 +17,8 @@
     "@open-wc/testing": "^3.1.6",
     "@types/sinon-chai": "^3.2.8",
     "@web/test-runner": "^0.13.31",
+    "@web/test-runner-puppeteer": "^0.10.5",
+    "fast-json-patch": "^3.1.1",
     "quibble": "^0.6.12",
     "sinon": "^14.0.0",
     "sinon-chai": "^3.7.0",
@@ -24,6 +26,7 @@
     "typescript": "^4.2.2"
   },
   "dependencies": {
+    "json-joy": "^1.18.1",
     "lit": "^2.2.6",
     "phoenix": "1.6.10"
   }
