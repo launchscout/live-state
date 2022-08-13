@@ -41,6 +41,7 @@ export class LiveState {
   socket: Socket;
   channelName: string;
   state: any;
+  stateVersion: number;
 
   constructor(url, channelName) {
     this.channelName = channelName;
@@ -67,15 +68,21 @@ export class LiveState {
     this.subscribers = this.subscribers.filter(s => s !== subscriber);
   }
 
-  handleChange(state) {
+  handleChange({ state, version }) {
     this.state = state;
+    this.stateVersion = version;
     this.notifySubscribers(this.state);
   }
 
-  handlePatch({ patch }) {
-    const { doc, res } = applyPatch(this.state, patch, { mutate: false });
-    this.state = doc;
-    this.notifySubscribers(this.state);
+  handlePatch({ patch, version }) {
+    if (version === this.stateVersion + 1) {
+      const { doc, res } = applyPatch(this.state, patch, { mutate: false });
+      this.state = doc;
+      this.stateVersion = version;
+      this.notifySubscribers(this.state);
+    } else {
+      this.channel.push('lvs_refresh');
+    }
   }
 
   notifySubscribers(state) {
@@ -84,6 +91,21 @@ export class LiveState {
 
   pushEvent(event: CustomEvent) {
     this.channel.push(`lvs_evt:${event.type}`, event.detail);
+  }
+}
+
+type LiveStateDecoratorOptions = {
+  channelName?: string
+} & ConnectOptions
+
+export const liveState = (options: LiveStateDecoratorOptions) => {
+  return (targetClass: Function) => {
+    const superConnected = targetClass.prototype.connectedCallback;
+    targetClass.prototype.connectedCallback = function () {
+      superConnected.apply(this);
+      this.liveState = new LiveState(this.url, options.channelName || this.channelName);
+      connectElement(this.liveState, this, options as any);
+    }
   }
 }
 

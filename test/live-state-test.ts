@@ -48,15 +48,16 @@ describe('LiveState', () => {
     const onArgs = liveState.channel.on.getCall(0).args;
     expect(onArgs[0]).to.equal("state:change");
     const onHandler = onArgs[1];
-    onHandler({ foo: 'wuzzle' });
+    onHandler({state: { foo: 'wuzzle' }, version: 0});
     expect(state.foo).to.equal('wuzzle');
+    expect(liveState.stateVersion).to.equal(0);
     socketMock.verify();
   });
 
   it('understands jsonpatch for state changes', () => {
     const initialState = { foo: "bar" };
     const newState = { foo: "baz", bing: [1, 2] };
-    const patch = { patch: compare(initialState, newState) };
+    const patch = compare(initialState, newState);
     socketMock.expects('connect').exactly(1);
     socketMock.expects('channel').exactly(1).returns(stubChannel);
     liveState.connect({ foo: 'bar' });
@@ -66,14 +67,39 @@ describe('LiveState', () => {
     const onChangeArgs = liveState.channel.on.getCall(0).args;
     expect(onChangeArgs[0]).to.equal("state:change");
     const onChangeHandler = onChangeArgs[1];
-    onChangeHandler(initialState);
+    onChangeHandler({state: initialState, version: 0});
 
     const onPatchArgs = liveState.channel.on.getCall(1).args;
     expect(onPatchArgs[0]).to.equal("state:patch");
     const onPatchHandler = onPatchArgs[1];
-    onPatchHandler(patch);
+    onPatchHandler({patch, version: 1});
 
     expect(state).to.deep.equal(newState);
+  });
+
+  it('requests new state when receiving patch with incorrect version', () => {
+    const initialState = { foo: "bar" };
+    const newState = { foo: "baz", bing: [1, 2] };
+    const patch = compare(initialState, newState);
+    socketMock.expects('connect').exactly(1);
+    socketMock.expects('channel').exactly(1).returns(stubChannel);
+    liveState.connect({ foo: 'bar' });
+    let state = {};
+    liveState.subscribe((newState) => state = newState);
+
+    const onChangeArgs = liveState.channel.on.getCall(0).args;
+    expect(onChangeArgs[0]).to.equal("state:change");
+    const onChangeHandler = onChangeArgs[1];
+    onChangeHandler({state: initialState, version: 0});
+
+    const onPatchArgs = liveState.channel.on.getCall(1).args;
+    expect(onPatchArgs[0]).to.equal("state:patch");
+    const onPatchHandler = onPatchArgs[1];
+    onPatchHandler({patch, version: 2});
+
+    expect(state).to.deep.equal(initialState);
+    const pushCall = liveState.channel.push.getCall(0);
+    expect(pushCall.args[0]).to.equal('lvs_refresh');
   });
 
   it('disconnects', () => {
@@ -105,7 +131,7 @@ describe('LiveState', () => {
         attributes: ['foo']
       });
       const stateChange = liveState.channel.on.getCall(0).args[1];
-      stateChange({ foo: 'wuzzle', bar: 'wizzle' });
+      stateChange({state: { foo: 'wuzzle', bar: 'wizzle' }, version: 1});
       await el.updateComplete;
       expect(el.bar).to.equal('wizzle');
       expect(el.shadowRoot.innerHTML).to.contain('wizzle');

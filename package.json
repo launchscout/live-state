@@ -1,11 +1,11 @@
 {
   "name": "phx-live-state",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "description": "An experiment in web app state management",
   "main": "build/src/live-state.js",
   "types": "build/src/live-state.d.ts",
   "scripts": {
-    "test": "web-test-runner \"build/**/*test.js\" --puppeteer --node-resolve",
+    "test": "web-test-runner \"build/**/*test.js\" --node-resolve",
     "build": "tsc",
     "pretest": "tsc",
     "prepublish": "npm run build"
