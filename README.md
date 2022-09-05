@@ -34,6 +34,7 @@ const liveState = new LiveState('ws://localhost:4000', 'channelName');
 
 ```javascript
 import { connectElement } from 'phx-live-state';
+```
 
 This is a function designed to connect an HTML Element with livestate and takes the following arguments:
 
@@ -80,3 +81,5 @@ It's easiest to understand all this by example. Take a look at the following exa
 
 * https://github.com/launchscout/livestate-comments
 * https://github.com/launchscout/live_state_comments
+* https://github.com/launchscout/discord_element
+* https://github.com/launchscout/discord-element
