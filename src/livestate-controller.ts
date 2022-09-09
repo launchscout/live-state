@@ -42,7 +42,7 @@ export class LiveStateController implements ReactiveController {
       this.host.requestUpdate();
     });
     this.options.events?.send?.forEach((eventName) => {
-      this.host.addEventListener(eventName, (customEvent: CustomEvent) => this.liveState.pushEvent(customEvent));
+      this.host.addEventListener(eventName, (customEvent: CustomEvent) => this.liveState.pushCustomEvent(customEvent));
     });
     this.options.events?.receive?.forEach((eventName) => {
       this.liveState.channel.on(eventName, (event) => {

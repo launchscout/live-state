@@ -112,7 +112,17 @@ describe('LiveState', () => {
     socketMock.expects('connect').exactly(1);
     socketMock.expects('channel').exactly(1).withArgs('stuff').returns(stubChannel);
     liveState.connect();
-    liveState.pushEvent(new CustomEvent('sumpinhappend', { detail: { foo: 'bar' } }));
+    liveState.pushCustomEvent(new CustomEvent('sumpinhappend', { detail: { foo: 'bar' } }));
+    const pushCall = liveState.channel.push.getCall(0);
+    expect(pushCall.args[0]).to.equal('lvs_evt:sumpinhappend');
+    expect(pushCall.args[1]).to.deep.equal({ foo: 'bar' });
+  });
+
+  it('pushes non custom event events over the channel', () => {
+    socketMock.expects('connect').exactly(1);
+    socketMock.expects('channel').exactly(1).withArgs('stuff').returns(stubChannel);
+    liveState.connect();
+    liveState.pushEvent('sumpinhappend', { foo: 'bar' });
     const pushCall = liveState.channel.push.getCall(0);
     expect(pushCall.args[0]).to.equal('lvs_evt:sumpinhappend');
     expect(pushCall.args[1]).to.deep.equal({ foo: 'bar' });

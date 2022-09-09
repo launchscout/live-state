@@ -24,7 +24,7 @@ export const connectElement = (liveState: LiveState, el: HTMLElement, { properti
     });
   });
   events?.send?.forEach((eventName) => {
-    el.addEventListener(eventName, (customEvent: CustomEvent) => liveState.pushEvent(customEvent));
+    el.addEventListener(eventName, (customEvent: CustomEvent) => liveState.pushCustomEvent(customEvent));
   });
   events?.receive?.forEach((eventName) => {
     liveState.channel.on(eventName, (event) => {
@@ -89,7 +89,11 @@ export class LiveState {
     this.subscribers.forEach((subscriber) => subscriber(state));
   }
 
-  pushEvent(event: CustomEvent) {
+  pushEvent(eventName, payload) {
+    this.channel.push(`lvs_evt:${eventName}`, payload);
+  }
+
+  pushCustomEvent(event: CustomEvent) {
     this.channel.push(`lvs_evt:${event.type}`, event.detail);
   }
 }
