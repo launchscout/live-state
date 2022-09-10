@@ -2,8 +2,8 @@
   "name": "phx-live-state",
   "version": "0.6.0",
   "description": "An experiment in web app state management",
-  "main": "build/src/live-state.js",
-  "types": "build/src/live-state.d.ts",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
   "scripts": {
     "test": "web-test-runner \"build/**/*test.js\" --node-resolve",
     "build": "tsc",

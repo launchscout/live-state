@@ -3,35 +3,6 @@ import { Socket, Channel } from "phoenix";
 
 export { LiveStateController } from "./livestate-controller";
 
-type ConnectOptions = {
-  properties?: Array<string>;
-  attributes?: Array<string>;
-  events?: {
-    send?: Array<string>,
-    receive?: Array<string>
-  },
-  connectParams?: object
-}
-
-export const connectElement = (liveState: LiveState, el: HTMLElement, { properties, attributes, events, connectParams }: ConnectOptions) => {
-  liveState.connect(connectParams);
-  liveState.subscribe((state: any) => {
-    properties?.forEach((prop) => {
-      el[prop] = state[prop];
-    });
-    attributes?.forEach((attr) => {
-      el.setAttribute(attr, state[attr]);
-    });
-  });
-  events?.send?.forEach((eventName) => {
-    el.addEventListener(eventName, (customEvent: CustomEvent) => liveState.pushCustomEvent(customEvent));
-  });
-  events?.receive?.forEach((eventName) => {
-    liveState.channel.on(eventName, (event) => {
-      el.dispatchEvent(new CustomEvent(eventName, { detail: event }));
-    });
-  })
-}
 
 export class LiveState {
 
@@ -95,21 +66,6 @@ export class LiveState {
 
   pushCustomEvent(event: CustomEvent) {
     this.channel.push(`lvs_evt:${event.type}`, event.detail);
-  }
-}
-
-type LiveStateDecoratorOptions = {
-  channelName?: string
-} & ConnectOptions
-
-export const liveState = (options: LiveStateDecoratorOptions) => {
-  return (targetClass: Function) => {
-    const superConnected = targetClass.prototype.connectedCallback;
-    targetClass.prototype.connectedCallback = function () {
-      superConnected.apply(this);
-      this.liveState = new LiveState(this.url, options.channelName || this.channelName);
-      connectElement(this.liveState, this, options as any);
-    }
   }
 }
 

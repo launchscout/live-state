@@ -1,5 +1,6 @@
 import { expect } from "@esm-bundle/chai";
-import LiveState, { connectElement } from '../src/live-state';
+import LiveState from '../src/live-state';
+import { connectElement } from "../src";
 import { Channel } from 'phoenix';
 import sinon from 'sinon';
 import { html, LitElement } from 'lit';
