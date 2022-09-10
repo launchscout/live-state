@@ -62,6 +62,7 @@ The decorator expects to passed an object with the following properties, all of 
 are optional:
 * url (defaults to `this.url` if not passed)
 * channelName (defaults to `this.channelName` if not passed)
+* shared - pass true to use shared `LiveState` instance on `window.__liveState`. Will create and set if not found
 * properties - passed into `connectElement`
 * events - passed into `connectElement`
 
