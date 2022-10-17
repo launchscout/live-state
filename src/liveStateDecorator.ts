@@ -28,6 +28,11 @@ const liveState = (options: LiveStateDecoratorOptions) => {
       superConnected.apply(this);
       connectElement(findLiveState(this, options), this, options as any);
     }
+    const superDisconnected = targetClass.prototype.disconnectedCallback;
+    targetClass.prototype.disconnectedCallback = function() {
+      superDisconnected.apply(this)
+      this.liveState && this.liveState.disconnect();
+    }
   }
 }
 

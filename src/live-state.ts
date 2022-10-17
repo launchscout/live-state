@@ -13,6 +13,7 @@ export class LiveState {
   channelName: string;
   state: any;
   stateVersion: number;
+  connected: boolean = false;
 
   constructor(url, channelName) {
     this.channelName = channelName;
@@ -20,14 +21,20 @@ export class LiveState {
   }
 
   connect(params) {
-    this.socket.connect();
-    this.channel = this.socket.channel(this.channelName, params);
-    this.channel.join().receive("ok", () => console.log('joined'));
-    this.channel.on("state:change", (state) => this.handleChange(state));
-    this.channel.on("state:patch", (patch) => this.handlePatch(patch));
+    if (!this.connected) {
+      this.socket.connect();
+      this.channel = this.socket.channel(this.channelName, params);
+      this.channel.join().receive("ok", () => {
+        console.log('joined');
+      });
+      this.channel.on("state:change", (state) => this.handleChange(state));
+      this.channel.on("state:patch", (patch) => this.handlePatch(patch));
+      this.connected = true;
+    }
   }
 
   disconnect() {
+    this.channel && this.channel.leave();
     this.socket.disconnect();
   }
 

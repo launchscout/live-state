@@ -1,6 +1,6 @@
 {
   "name": "phx-live-state",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "An experiment in web app state management",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
@@ -32,6 +32,6 @@
   "dependencies": {
     "json-joy": "^1.18.1",
     "lit": "^2.2.6",
-    "phoenix": "1.6.10"
+    "phoenix": "1.6.14"
   }
 }

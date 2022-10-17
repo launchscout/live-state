@@ -39,6 +39,14 @@ describe('LiveState', () => {
     socketMock.verify();
   });
 
+  it('does not connect if already connected', () => {
+    socketMock.expects('connect').exactly(1);
+    socketMock.expects('channel').exactly(1).withArgs('stuff', { foo: 'bar' }).returns(stubChannel);
+    liveState.connect({ foo: 'bar' });
+    liveState.connect({ foo: 'bar' });
+    socketMock.verify();
+  });
+
   it('notifies subscribers', () => {
     socketMock.expects('connect').exactly(1);
     socketMock.expects('channel').exactly(1).withArgs('stuff', { foo: 'bar' }).returns(stubChannel);
