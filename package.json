@@ -1,6 +1,6 @@
 {
   "name": "phx-live-state",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "An experiment in web app state management",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
@@ -33,6 +33,6 @@
     "json-joy": "^1.18.1",
     "lit": "^2.2.6",
     "phoenix": "1.6.14",
-    "wc-context": "file:../wc-context"
+    "wc-context": "launchscout/wc-context"
   }
 }
