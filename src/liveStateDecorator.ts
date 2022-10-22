@@ -1,16 +1,29 @@
 import connectElement, { ConnectOptions } from "./connectElement";
 import LiveState from "./live-state";
+import { registerContext } from 'wc-context';
 
 export type LiveStateDecoratorOptions = {
   channelName?: string,
   url?: string,
-  shared?: boolean,
+  provide?: {
+    scope: object,
+    name: string | undefined
+  },
+  consume?: {
+    scope: object,
+    name: string | undefined
+  }
 } & ConnectOptions
 
 const findLiveState = (element: any, options: LiveStateDecoratorOptions) => {
-  if (options.shared) {
-    element.liveState = window['__liveState'] ? window['__liveState'] : 
-      window['__liveState'] = buildLiveState(element, options);
+  if (options.provide) {
+    const { scope, name } = options.provide;
+    const liveState = scope[name] ? scope[name] : 
+      scope[name] = buildLiveState(element, options);
+    registerContext(scope, name, liveState)
+    element.liveState = liveState;
+  } else if (options.consume) {
+    
   } else {
     element.liveState = buildLiveState(element, options)
   }
