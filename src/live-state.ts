@@ -16,6 +16,7 @@ export class LiveState {
   connected: boolean = false;
 
   constructor(url, channelName) {
+    console.log(`connecting liveState to ${url} from ${this.constructor.name}`);
     this.channelName = channelName;
     this.socket = new Socket(url, { logger: ((kind, msg, data) => { console.log(`${kind}: ${msg}`, data) }) });
   }
